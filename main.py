@@ -1,6 +1,5 @@
 import full_plotting
 import detector
-import aug_cfg
 import augmentation
 
 augmentation.augment()

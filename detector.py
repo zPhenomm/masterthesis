@@ -1,13 +1,15 @@
 import cv2
 import os
+import time
+import config
 
-path = os.getcwd() + "/input_data/"
+path = config.PATH
 
-# uses yolo weights to detect coco objects in input image, draws bounding boxes around objects and saves result
-# outputs boolean flag if a tractor (car or truck in coco) is detected or not
+
+# uses yolo weights to detect coco and tsr objects in input image, draws bounding boxes around objects and saves result
 def detect():
-    if not os.path.exists(path + "/original/"):
-        os.makedirs(path + "/original/")
+    if not os.path.exists(path + "/augmented/"):
+        os.makedirs(path + "/augmented/")
 
     filelist = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]  # ignore folders
     for filename in filelist:
@@ -19,10 +21,10 @@ def detect():
         img = cv2.imread(path + filename)
 
         # COCO DETECTION
-        with open("coco.names", 'r') as f:
+        with open("resources/coco.names", 'r') as f:
             classes = f.read().splitlines()
 
-        net = cv2.dnn.readNetFromDarknet("yolov4.cfg", "yolov4.weights")
+        net = cv2.dnn.readNetFromDarknet("resources/yolov4.cfg", "resources/yolov4.weights")
 
         model = cv2.dnn_DetectionModel(net)
         model.setInputParams(scale=1 / 255, size=(416, 416), swapRB=True)
@@ -30,15 +32,17 @@ def detect():
 
         detected_classes = []
         for (classId, score, box) in zip(classIds, scores, boxes):
-            cv2.rectangle(img, (box[0], box[1]), (box[0] + box[2], box[1] + box[3]), color=(0, 0, 255), thickness=2)
+            cv2.rectangle(img, (box[0], box[1]), (box[0] + box[2], box[1] + box[3]), color=(101, 255, 0), thickness=5)
 
             text = '%s: %.2f' % (classes[classId], score)
-            cv2.putText(img, text, (box[0], box[1] - 5), cv2.FONT_HERSHEY_SIMPLEX, 1, color=(0, 0, 0), thickness=2)
+            cv2.putText(img, text, (box[0], box[1] - 5), cv2.FONT_HERSHEY_SIMPLEX, 2, color=(255, 255, 255), thickness=5)
 
             detected_classes.append(classes[classId] + ": " + str(round(100 * score, 0))[:-2] + "%")
         print(detected_classes)
 
         cv2.imwrite(path + filename[:-4] + "_coco.jpg", img)
+
+        time.sleep(0.2)
 
         # write txt
         if filename.find("sev") != -1:
@@ -53,13 +57,15 @@ def detect():
                 f.write(line)
         f.close()
 
+        time.sleep(0.2)
+
         # TS DETECTION
         img = cv2.imread(path + filename)
 
-        with open("classes.names", 'r') as f:
+        with open("resources/classes.names", 'r') as f:
             classes = f.read().splitlines()
 
-        net = cv2.dnn.readNetFromDarknet("yolov4-ts2.cfg", "yolov4-ts2_best.weights")
+        net = cv2.dnn.readNetFromDarknet("resources/yolov4-ts2.cfg", "resources/yolov4-ts2_best.weights")
 
         model = cv2.dnn_DetectionModel(net)
         model.setInputParams(scale=1 / 255, size=(416, 416), swapRB=True)
@@ -67,15 +73,17 @@ def detect():
 
         detected_classes = []
         for (classId, score, box) in zip(classIds, scores, boxes):
-            cv2.rectangle(img, (box[0], box[1]), (box[0] + box[2], box[1] + box[3]), color=(0, 0, 255), thickness=2)
+            cv2.rectangle(img, (box[0], box[1]), (box[0] + box[2], box[1] + box[3]), color=(101, 255, 0), thickness=5)
 
             text = '%s: %.2f' % (classes[classId], score)
-            cv2.putText(img, text, (box[0], box[1] - 5), cv2.FONT_HERSHEY_SIMPLEX, 1, color=(0, 0, 0), thickness=2)
+            cv2.putText(img, text, (box[0], box[1] - 5), cv2.FONT_HERSHEY_SIMPLEX, 2, color=(255, 255, 255), thickness=5)
 
             detected_classes.append(classes[classId] + ": " + str(round(100 * score, 0))[:-2] + "%")
         print(detected_classes)
 
         cv2.imwrite(path + filename[:-4] + "_tsr.jpg", img)
+
+        time.sleep(0.2)
 
         # write txt
         if filename.find("sev") != -1:
@@ -90,9 +98,13 @@ def detect():
                 f.write(line)
         f.close()
 
+        time.sleep(0.2)
+
         if filename.find("sev") != -1:
-            os.rename(path + filename[:-4] + ".txt", path + "/original/" + filename[:-4] + ".txt")
-        os.rename(path + filename, path + "/original/" + filename)
+            os.rename(path + filename[:-4] + ".txt", path + "/augmented/" + filename[:-4] + ".txt")
+        os.rename(path + filename, path + "/augmented/" + filename)
+
+        time.sleep(0.2)
 
         # cv2.imshow('Image', img)
         # cv2.waitKey(0)

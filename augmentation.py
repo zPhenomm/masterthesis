@@ -10,18 +10,20 @@ import imgaug.augmenters as iaa
 import cv2
 import aug_cfg
 import os
+import config
+
+path = config.PATH
 
 
 def augment():
-    if aug_cfg.NO_AUG:
+    if config.NO_AUG:
         exit()
 
     ia.seed(1)
-    path = os.getcwd() + "/input_data/"
 
     if aug_cfg.sequence:
-        for i in range(0, 6):
-            for j in range(0, 6):
+        for i in range(0, config.SEVERITY_NUMBER):
+            for j in range(0, config.SEVERITY_NUMBER):
                 experiment_seq = aug_cfg.getExperimentSeq(i, j)
                 seq = iaa.Sequential(experiment_seq, random_order=False)
 
@@ -35,8 +37,8 @@ def augment():
                     img = cv2.imread(filepath)
 
                     image_aug = seq(image=img)
-                    # save image with same name + _exp_x_sev_i_j
-                    filepath = filepath[:-4] + "_exp_" + str(aug_cfg.experiment_number) + "_sev_" + str(i) + "_" + str(j) + ".jpg"
+                    # save image with same name + _eff_x_sev_i_j
+                    filepath = filepath[:-4] + "_eff_" + str(i) + "_sev_" + str(j) + ".jpg"
                     cv2.imwrite(filepath, image_aug)
                     filepath = filepath[:-4] + ".txt"
                     f = open(filepath, "w")
@@ -59,7 +61,7 @@ def augment():
             img = cv2.imread(filepath)
 
             image_aug = seq(image=img)
-            # save image with same name + _exp_x_sev_i_j
+            # save image with same name + _eff_x_sev_i_j
             filepath = filepath[:-4] + ".jpg"
             cv2.imwrite(filepath, image_aug)
             print(filename + " augmentation done")

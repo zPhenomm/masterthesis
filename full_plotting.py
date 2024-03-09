@@ -3,17 +3,18 @@ import os
 import seaborn as sns
 import numpy as np
 import random
+import config
 
-path = os.getcwd() + "/input_data/"
+path = config.PATH
 oldpath = path
-spots = ["0-0", "0-1", "0-2", "0-3", "0-4", "0-5", "1-0", "1-1", "1-2", "1-3", "1-4", "1-5", "2-0", "2-1", "2-2", "2-3",
-         "2-4", "2-5", "3-0", "3-1", "3-2", "3-3", "3-4", "3-5", "4-0", "4-1", "4-2", "4-3", "4-4", "4-5", "5-0", "5-1",
-         "5-2", "5-3", "5-4", "5-5"]
-weather_names = ["snow", "fog", "frost", "splatter", "brightness", "blur"]
 # modified_list = [[], []]
 # modifier = [1, 1, 1, 1, 1, 0.5]
 # modify = 0
-severity_number = 6
+spots = ["0-0", "0-1", "0-2", "0-3", "0-4", "0-5", "1-0", "1-1", "1-2", "1-3", "1-4", "1-5", "2-0", "2-1", "2-2", "2-3",
+         "2-4", "2-5", "3-0", "3-1", "3-2", "3-3", "3-4", "3-5", "4-0", "4-1", "4-2", "4-3", "4-4", "4-5", "5-0", "5-1",
+         "5-2", "5-3", "5-4", "5-5"]
+
+weather_names = ["snow", "fog", "frost", "splatter", "brightness", "blur"]
 
 # select plot types
 avg_plot = 1
@@ -314,9 +315,9 @@ def format_violin(lst, name, idx):
     fig.suptitle("deviation distribution over all images of class " + name)
     plot_layout = [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2)]
     count = 0
-    for i in range(0, len(lst[0]), severity_number):
-        axs[plot_layout[count]].violinplot(format[i:i+6])
-        axs[plot_layout[count]].set_xticks([1, 2, 3, 4, 5, 6], spots[i:i+6])
+    for i in range(0, len(lst[0]), config.SEVERITY_NUMBER):
+        axs[plot_layout[count]].violinplot(format[i:i+config.SEVERITY_NUMBER])
+        axs[plot_layout[count]].set_xticks([1, 2, 3, 4, 5, 6], spots[i:i+config.SEVERITY_NUMBER])
         axs[plot_layout[count]].set_ylim([0, 1.1])
         axs[plot_layout[count]].set_xlabel(weather_names[count])
         axs[plot_layout[count]].set_ylabel("deviation")
@@ -335,11 +336,11 @@ def avg_weather(lst, name):
     tmp = []
     sum = 0
 
-    for i in range(0, severity_number):
+    for i in range(0, config.SEVERITY_NUMBER):
         for j in range(0, len(lst)):
-            for k in range(0, len(lst[0]), severity_number):
+            for k in range(0, len(lst[0]), config.SEVERITY_NUMBER):
                 sum += lst[j][i+k]
-            sum = sum / severity_number
+            sum = sum / config.SEVERITY_NUMBER
             tmp.append(sum)
             sum = 0
         format.append(tmp)
@@ -427,8 +428,8 @@ def format_heatmap(lst, name, flag, idx):
 
     # change format of list for heatmap
     format = [[], [], [], [], [], []]
-    for j in range(0, severity_number):
-        for k in range(0, len(lst[0]), severity_number):
+    for j in range(0, config.SEVERITY_NUMBER):
+        for k in range(0, len(lst[0]), config.SEVERITY_NUMBER):
             format[j].append(avg_deviation[j + k])
 
     # calculate derivative of heatmap entries in y-direction, if selected
@@ -440,8 +441,8 @@ def format_heatmap(lst, name, flag, idx):
     #format_x = format.copy()
     if flag:
         last_coordinate = (0, 0)
-        for i in range(0, severity_number):
-            for j in range(0, severity_number):
+        for i in range(0, config.SEVERITY_NUMBER):
+            for j in range(0, config.SEVERITY_NUMBER):
                 m = round((format[j][i] - last_coordinate[1]), 3)
                 last_coordinate = (j + 1, format[j][i])
                 format_y[j][i] = m
@@ -496,7 +497,7 @@ def individual_heatmap(lst, img):
 
     for idx, item in enumerate(lst):
         format = [[], [], [], [], [], []]
-        for j in range(0, severity_number):
+        for j in range(0, config.SEVERITY_NUMBER):
             format[j].append(item[0][j])
             format[j].append(item[0][j+6])
             format[j].append(item[0][j+12])
