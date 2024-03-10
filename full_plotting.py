@@ -71,7 +71,7 @@ def prepare_data():
 
     # find the truthimages in the output
     for file in os.listdir(oldpath + "coco_results/"):
-        if file.find("sev") == -1 and file.find(".txt") != -1 and file.find("blur") == -1:
+        if file.find("sev") == -1 and file.find(".txt") != -1:
             truthimg_coco.append(file)
         elif file.find("sev") != -1 and file.find("coco") != -1 and file.find(".txt") != -1:
             cocolist.append(file)
@@ -79,7 +79,7 @@ def prepare_data():
     cocolist.sort()
 
     for file in os.listdir(oldpath + "tsr_results/"):
-        if file.find("sev") == -1 and file.find(".txt") != -1 and file.find("blur") == -1:
+        if file.find("sev") == -1 and file.find(".txt") != -1:
             truthimg_tsr.append(file)
         elif file.find("sev") != -1 and file.find("tsr") != -1 and file.find(".txt") != -1:
             tsrlist.append(file)
@@ -221,7 +221,7 @@ def prepare_data():
         plt.show()
 
 
-# this method calculates the deviation of a augmentation sequence of an image of a specified class (car, person,..)
+# this method calculates the deviation of an augmentation sequence of an image of a specified class (car, person,..)
 def calculateDeviations(sequence, loopindex, obj, true_values):
     values = []
     deviation = []
@@ -253,8 +253,11 @@ def readInValues(obj, item):
         lines = f.readlines()
         sep = obj + ":"
         values = ([round((int(x[len(sep):-2])) * 0.01, 2) for x in lines if sep in x])
-        if obj == "car":  # trucks are cars as well
+        if obj == "car":  # trucks und buses are cars as well
             sep = "truck:"
+            tmp = ([round((int(x[len(sep):-2])) * 0.01, 2) for x in lines if sep in x])
+            values.extend(tmp)
+            sep = "bus:"
             tmp = ([round((int(x[len(sep):-2])) * 0.01, 2) for x in lines if sep in x])
             values.extend(tmp)
     f.close()
@@ -345,8 +348,6 @@ def avg_weather(lst, name):
             sum = 0
         format.append(tmp)
         tmp = []
-
-    print(format)
 
     plt.figure()
     plt.violinplot(format)
