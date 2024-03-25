@@ -12,7 +12,7 @@ import aug_cfg
 import os
 import config
 
-path = config.PATH
+input_path = config.INPUT_PATH
 
 
 def augment():
@@ -27,13 +27,13 @@ def augment():
                 experiment_seq = aug_cfg.getExperimentSeq(i, j)
                 seq = iaa.Sequential(experiment_seq, random_order=False)
 
-                filelist = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]  # ignore folders
+                filelist = [f for f in os.listdir(input_path) if os.path.isfile(os.path.join(input_path, f))]  # ignore folders
                 for filename in filelist:
                     # skip augmented images, info.txt and the script itself
                     if filename.find(".jpg") == -1 or filename.find("_sev") != -1:
                         continue
 
-                    filepath = os.path.join(path, filename)
+                    filepath = os.path.join(input_path, filename)
                     img = cv2.imread(filepath)
 
                     image_aug = seq(image=img)
@@ -50,14 +50,14 @@ def augment():
         experiment_seq = aug_cfg.getExperimentSeq(0, 0)
         seq = iaa.Sequential(experiment_seq, random_order=False)
 
-        filelist = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]  # ignore folders
+        filelist = [f for f in os.listdir(input_path) if os.path.isfile(os.path.join(input_path, f))]  # ignore folders
         for filename in filelist:
 
             # skip script and info file
             if filename.find(".py") != -1 or filename.find(".txt") != -1:
                 continue
 
-            filepath = os.path.join(path, filename)
+            filepath = os.path.join(input_path, filename)
             img = cv2.imread(filepath)
 
             image_aug = seq(image=img)

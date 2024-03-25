@@ -1,5 +1,7 @@
 import os
 
-PATH = os.getcwd() + "/input_data/"
+INPUT_PATH = os.getcwd() + "/input_data/"
+OUTPUT_PATH = os.getcwd() + "/results/"
+
 NO_AUG = False
 SEVERITY_NUMBER = 6

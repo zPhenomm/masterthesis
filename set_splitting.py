@@ -1,9 +1,9 @@
 import os
 import random
 
-path = os.getcwd() + "/GTSDB/"
+input_path = os.getcwd() + "/GTSDB/"
 
-filenames = os.listdir(path)
+filenames = os.listdir(input_path)
 
 random.shuffle(filenames)
 num_test_files = int(len(filenames) * 0.12)  # 12% test image ratio

@@ -3,22 +3,22 @@ import os
 import time
 import config
 
-path = config.PATH
+input_path = config.INPUT_PATH
 
 
 # uses yolo weights to detect coco and tsr objects in input image, draws bounding boxes around objects and saves result
 def detect():
-    if not os.path.exists(path + "/augmented/"):
-        os.makedirs(path + "/augmented/")
+    if not os.path.exists(input_path + "/augmented/"):
+        os.makedirs(input_path + "/augmented/")
 
-    filelist = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]  # ignore folders
+    filelist = [f for f in os.listdir(input_path) if os.path.isfile(os.path.join(input_path, f))]  # ignore folders
     for filename in filelist:
-        # skip augmented images, info.txt and the script itself
+        # skip detected images, info.txt
         if filename.find(".txt") != -1 or filename.find("coco") != -1 or filename.find("tsr") != -1:
             continue
         print(filename)
 
-        img = cv2.imread(path + filename)
+        img = cv2.imread(input_path + filename)
 
         # COCO DETECTION
         with open("resources/coco.names", 'r') as f:
@@ -40,16 +40,16 @@ def detect():
             detected_classes.append(classes[classId] + ": " + str(round(100 * score, 0))[:-2] + "%")
         print(detected_classes)
 
-        cv2.imwrite(path + filename[:-4] + "_coco.jpg", img)
+        cv2.imwrite(input_path + filename[:-4] + "_coco.jpg", img)
 
         time.sleep(0.2)
 
         # write txt
         if filename.find("sev") != -1:
-            f = open(path + filename[:-4] + ".txt", "r")
+            f = open(input_path + filename[:-4] + ".txt", "r")
             lines = f.readlines()
             f.close()
-        f = open(path + filename[:-4] + "_coco.txt", "w")
+        f = open(input_path + filename[:-4] + "_coco.txt", "w")
         for item in detected_classes:
             f.write(item + "\n")
         if filename.find("sev") != -1:
@@ -60,7 +60,7 @@ def detect():
         time.sleep(0.2)
 
         # TS DETECTION
-        img = cv2.imread(path + filename)
+        img = cv2.imread(input_path + filename)
 
         with open("resources/classes.names", 'r') as f:
             classes = f.read().splitlines()
@@ -81,16 +81,16 @@ def detect():
             detected_classes.append(classes[classId] + ": " + str(round(100 * score, 0))[:-2] + "%")
         print(detected_classes)
 
-        cv2.imwrite(path + filename[:-4] + "_tsr.jpg", img)
+        cv2.imwrite(input_path + filename[:-4] + "_tsr.jpg", img)
 
         time.sleep(0.2)
 
         # write txt
         if filename.find("sev") != -1:
-            f = open(path + filename[:-4] + ".txt", "r")
+            f = open(input_path + filename[:-4] + ".txt", "r")
             lines = f.readlines()
             f.close()
-        f = open(path + filename[:-4] + "_tsr.txt", "w")
+        f = open(input_path + filename[:-4] + "_tsr.txt", "w")
         for item in detected_classes:
             f.write(item + "\n")
         if filename.find("sev") != -1:
@@ -101,8 +101,9 @@ def detect():
         time.sleep(0.2)
 
         if filename.find("sev") != -1:
-            os.rename(path + filename[:-4] + ".txt", path + "/augmented/" + filename[:-4] + ".txt")
-        os.rename(path + filename, path + "/augmented/" + filename)
+            os.rename(input_path + filename[:-4] + ".txt", input_path + "/augmented/" + filename[:-4] + ".txt")
+        if not (filename.find("sev") == -1 and filename.find(".txt") == -1):  # keep original images in input folder
+            os.rename(input_path + filename, input_path + "/augmented/" + filename)
 
         time.sleep(0.2)
 

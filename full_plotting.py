@@ -5,8 +5,8 @@ import numpy as np
 import random
 import config
 
-path = config.PATH
-oldpath = path
+input_path = config.INPUT_PATH
+output_path = config.OUTPUT_PATH
 # modified_list = [[], []]
 # modifier = [1, 1, 1, 1, 1, 0.5]
 # modify = 0
@@ -28,40 +28,28 @@ show = 0  # show plots
 
 
 def sortResults():
-    if not os.path.exists(path + "coco_results/"):
-        os.makedirs(path + "coco_results/")
-    if not os.path.exists(path + "tsr_results/"):
-        os.makedirs(path + "tsr_results/")
-    if not os.path.exists(path + "plots/"):
-        os.makedirs(path + "plots/")
+    if not os.path.exists(output_path):
+        os.makedirs(output_path)
 
-    itemlist = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]  # ignore folders
+    if not os.path.exists(output_path + "coco_results/"):
+        os.makedirs(output_path + "coco_results/")
+    if not os.path.exists(output_path + "tsr_results/"):
+        os.makedirs(output_path + "tsr_results/")
+    if not os.path.exists(output_path + "plots/"):
+        os.makedirs(output_path + "plots/")
+
+    itemlist = [f for f in os.listdir(input_path) if os.path.isfile(os.path.join(input_path, f))]  # ignore folders
+
     for i in range(0, len(itemlist)):
-
         name = itemlist[i]
         if name.find("coco") != -1:
-            os.replace(path + name, path + "coco_results/" + name)
+            os.replace(input_path + name, output_path + "coco_results/" + name)
         elif name.find("tsr") != -1:
-            os.replace(path + name, path + "tsr_results/" + name)
-
-
-def converttxt():
-    lst = []
-    for file in os.listdir(oldpath + "coco_results/"):
-        if file.find(".txt") != -1:
-            lst.append(file)
-    for item in lst:
-        os.replace(oldpath + "coco_results/" + item, oldpath + "coco_results/" + item[:-4] + ".yaml")
-    lst = []
-    for file in os.listdir(oldpath + "tsr_results/"):
-        if file.find(".txt") != -1:
-            lst.append(file)
-    for item in lst:
-        os.replace(oldpath + "tsr_results/" + item, oldpath + "tsr_results/" + item[:-4] + ".yaml")
+            os.replace(input_path + name, output_path + "tsr_results/" + name)
 
 
 def prepare_data():
-    global path
+    global input_path
     global modified_list
 
     cocolist = []
@@ -70,7 +58,7 @@ def prepare_data():
     truthimg_tsr = []
 
     # find the truthimages in the output
-    for file in os.listdir(oldpath + "coco_results/"):
+    for file in os.listdir(output_path + "coco_results/"):
         if file.find("sev") == -1 and file.find(".txt") != -1:
             truthimg_coco.append(file)
         elif file.find("sev") != -1 and file.find("coco") != -1 and file.find(".txt") != -1:
@@ -78,7 +66,7 @@ def prepare_data():
     truthimg_coco.sort()
     cocolist.sort()
 
-    for file in os.listdir(oldpath + "tsr_results/"):
+    for file in os.listdir(output_path + "tsr_results/"):
         if file.find("sev") == -1 and file.find(".txt") != -1:
             truthimg_tsr.append(file)
         elif file.find("sev") != -1 and file.find("tsr") != -1 and file.find(".txt") != -1:
@@ -87,7 +75,7 @@ def prepare_data():
     tsrlist.sort()
 
     # coco analysis
-    path = oldpath + "coco_results/"
+    mode = "coco_results/"
     sequence = []
     index = ["car", "person"]
     true_values_coco = [[], []]
@@ -102,13 +90,13 @@ def prepare_data():
         #sequence[i].sort()
 
         # save ground truth values of persons and cars
-        true_values_coco[0].append(readInValues("car", truthimg_coco[i]))
-        true_values_coco[1].append(readInValues("person", truthimg_coco[i]))
+        true_values_coco[0].append(readInValues("car", truthimg_coco[i], mode))
+        true_values_coco[1].append(readInValues("person", truthimg_coco[i], mode))
 
         # calculate deviations of images to ground truth
         for pos in range(0, len(true_values_coco)):
             if true_values_coco[pos][i]:
-                values, deviation = calculateDeviations(sequence, i, index[pos], true_values_coco[pos])
+                values, deviation = calculateDeviations(sequence, i, index[pos], true_values_coco[pos], mode)
                 plotlist.append([deviation, index[pos]])
                 full_dev_coco[pos].append(deviation)
 
@@ -144,7 +132,7 @@ def prepare_data():
             plot_avg(full_dev_coco[i], index[i], i)
 
     # tsr analysis
-    path = oldpath + "tsr_results/"
+    mode = "tsr_results/"
     sequence = []
     modified_list = [[], [], [], [], [], [], []]
     index = ["give_way", "priority_road", "prohibitory", "mandatory", "danger", "stop", "prohibitory_end"]
@@ -159,18 +147,18 @@ def prepare_data():
         sequence.append([x for x in tsrlist if stripped in x])
 
         # save ground truth values of traffic signs
-        true_values_tsr[0].append(readInValues("give_way", truthimg_tsr[i]))
-        true_values_tsr[1].append(readInValues("priority_road", truthimg_tsr[i]))
-        true_values_tsr[2].append(readInValues("prohibitory", truthimg_tsr[i]))
-        true_values_tsr[3].append(readInValues("mandatory", truthimg_tsr[i]))
-        true_values_tsr[4].append(readInValues("danger", truthimg_tsr[i]))
-        true_values_tsr[5].append(readInValues("stop", truthimg_tsr[i]))
-        true_values_tsr[6].append(readInValues("prohibitory_end", truthimg_tsr[i]))
+        true_values_tsr[0].append(readInValues("give_way", truthimg_tsr[i], mode))
+        true_values_tsr[1].append(readInValues("priority_road", truthimg_tsr[i], mode))
+        true_values_tsr[2].append(readInValues("prohibitory", truthimg_tsr[i], mode))
+        true_values_tsr[3].append(readInValues("mandatory", truthimg_tsr[i], mode))
+        true_values_tsr[4].append(readInValues("danger", truthimg_tsr[i], mode))
+        true_values_tsr[5].append(readInValues("stop", truthimg_tsr[i], mode))
+        true_values_tsr[6].append(readInValues("prohibitory_end", truthimg_tsr[i], mode))
 
         # calculate deviations of images to ground truth
         for pos in range(0, len(true_values_tsr)):
             if true_values_tsr[pos][i]:
-                values, deviation = calculateDeviations(sequence, i, index[pos], true_values_tsr[pos])
+                values, deviation = calculateDeviations(sequence, i, index[pos], true_values_tsr[pos], mode)
                 plotlist.append([deviation, index[pos]])
                 full_dev_tsr[pos].append(deviation)
 
@@ -222,11 +210,11 @@ def prepare_data():
 
 
 # this method calculates the deviation of an augmentation sequence of an image of a specified class (car, person,..)
-def calculateDeviations(sequence, loopindex, obj, true_values):
+def calculateDeviations(sequence, loopindex, obj, true_values, mode):
     values = []
     deviation = []
     for j, item in enumerate(sequence[loopindex]):
-        values.append(readInValues(obj, item))
+        values.append(readInValues(obj, item, mode))
 
         while len(true_values[loopindex]) > len(values[j]):  # in case of no detections add 0 as flags
             values[j].append(0)
@@ -247,9 +235,9 @@ def calculateDeviations(sequence, loopindex, obj, true_values):
 
 
 # this helper method reads in the values of a specified class (car, person,..) in a specified txt file (item)
-def readInValues(obj, item):
+def readInValues(obj, item, mode):
 
-    with open(path + item) as f:
+    with open(output_path + mode + item) as f:
         lines = f.readlines()
         sep = obj + ":"
         values = ([round((int(x[len(sep):-2])) * 0.01, 2) for x in lines if sep in x])
@@ -326,7 +314,7 @@ def format_violin(lst, name, idx):
         axs[plot_layout[count]].set_ylabel("deviation")
         count += 1
     plt.tight_layout()
-    plt.savefig(oldpath + "plots/violin_" + name + ".png")
+    plt.savefig(output_path + "plots/violin_" + name + ".png")
 
 
 def avg_weather(lst, name):
@@ -357,7 +345,7 @@ def avg_weather(lst, name):
     ax.set_ylim([0, 1.1])
     plt.xlabel("weather severity")
     plt.ylabel("deviation")
-    plt.savefig(oldpath + "plots/avg_weather_violin_" + name + ".png")
+    plt.savefig(output_path + "plots/avg_weather_violin_" + name + ".png")
 
     # format violin plot for heatmap
     sum = 0
@@ -381,7 +369,7 @@ def avg_weather(lst, name):
     ax = sns.heatmap(format, cmap=cmap, yticklabels=y_label, vmin=0, vmax=1, annot=True, fmt=".2f")
     plt.title("heatmap of deviation with avg bad conditions " + name)
     plt.xlabel("weather severity")
-    plt.savefig(oldpath + "plots/avg_weather_heatmap_" + name + ".png")
+    plt.savefig(output_path + "plots/avg_weather_heatmap_" + name + ".png")
 
     plt.figure()
     cmap = sns.cm.rocket_r
@@ -389,7 +377,7 @@ def avg_weather(lst, name):
     ax = sns.heatmap(format_x, cmap=cmap, yticklabels=y_label, vmin=-1, vmax=1, annot=True, fmt=".2f")
     plt.title("heatmap change avg bad conditions " + name)
     plt.xlabel("weather severity")
-    plt.savefig(oldpath + "plots/avg_weather_heatmap_change" + name + ".png")
+    plt.savefig(output_path + "plots/avg_weather_heatmap_change" + name + ".png")
 
 
 # plots the average deviations over all images as a heatmap
@@ -476,9 +464,9 @@ def format_heatmap(lst, name, flag, idx):
     plt.xlabel("weather severity")
     plt.ylabel("weather effect")
     if flag:
-        plt.savefig(oldpath + "plots/heatmap_change" + name + ".png")
+        plt.savefig(output_path + "plots/heatmap_change" + name + ".png")
     else:
-        plt.savefig(oldpath + "plots/heatmap_" + name + ".png")
+        plt.savefig(output_path + "plots/heatmap_" + name + ".png")
 
     # if flag:
     #     plt.figure()
@@ -560,4 +548,4 @@ def plot_avg(lst, img, idx):
     ax.set_ylim([0, 1.1])
     plt.xlabel("augmentation")
     plt.ylabel("deviation")
-    plt.savefig(oldpath + "plots/avg_dev_" + img + ".png", bbox_inches='tight')
+    plt.savefig(output_path + "plots/avg_dev_" + img + ".png", bbox_inches='tight')
