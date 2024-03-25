@@ -4,6 +4,8 @@ import seaborn as sns
 import numpy as np
 import random
 import config
+import shutil
+import time
 
 input_path = config.INPUT_PATH
 output_path = config.OUTPUT_PATH
@@ -43,9 +45,11 @@ def sortResults():
     for i in range(0, len(itemlist)):
         name = itemlist[i]
         if name.find("coco") != -1:
-            os.replace(input_path + name, output_path + "coco_results/" + name)
+            shutil.copy2(input_path + name, output_path + "coco_results/" + name)  # need to use shutil here for Docker mounting
+            os.remove(input_path + name)
         elif name.find("tsr") != -1:
-            os.replace(input_path + name, output_path + "tsr_results/" + name)
+            shutil.copy2(input_path + name, output_path + "tsr_results/" + name)
+            os.remove(input_path + name)
 
 
 def prepare_data():

@@ -14,8 +14,8 @@ COPY . .
 # install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# mount point for a volume to view and save results
-VOLUME /usr/src/app
+# create directory for results to mount from local system
+RUN mkdir /usr/src/app/results
 
 # run main.py when the container launches
 CMD ["python3", "main.py"]

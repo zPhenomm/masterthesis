@@ -1,4 +1,4 @@
-# Masterthesis Max Hannawald
+## Masterthesis Max Hannawald
 Development of a prototype to analyse the influence of weather on the automatic detection of objects in traffic.
 ### To get started:
 Clone the master branch from the [repository](https://github.com/zPhenomm/masterthesis.git).
@@ -16,5 +16,7 @@ Make sure to have Git LFS installed on your system to download the .weights file
 - `GTSDB/`: Dataset on which the traffic sign detector has been trained.
 
 ### Running the project with Docker:
-- Build the image with: `docker build -t thesis .`
-- To run the project: `docker run -it thesis`
+- Build the image: `docker build -t thesis .`
+- Run the project and save results to a Docker volume: `docker run -it --name thesis-container -v thesis_results:/usr/src/app/results thesis`
+- Shutdown the Docker container: `docker stop thesis-container && docker rm thesis-container`
+- Copy the results to your system: `docker run --rm -v thesis_results:/usr/src/app/results -v /path/to/folder:/backup thesis cp -R /usr/src/app/results/. /backup`. Make sure to replace the `/path/to/folder` in the command with the desired output path on your system.
