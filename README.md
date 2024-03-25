@@ -16,9 +16,14 @@ Make sure to have Git LFS installed on your system to download the .weights file
 - `resources/`: Folder containing files for running object detection and YOLOv4 training.
 - `GTSDB/`: Dataset on which the traffic sign detector has been trained.
 
+### Running the project:
+- Install Python (Version >= 3.10) and pip
+- Install all requirements listed in `requirements.txt`
+- Run `python3 main.py` in the project directory
+
 ### Running the project with Docker:
 - Navigate to the project folder in your filesystem.
-- Build the image: `docker build -t thesis .`
+- Build the image (1.8 GB): `docker build -t thesis .`
 - Run the project and save results to a Docker volume: `docker run -it --name thesis-container -v thesis_results:/usr/src/app/results thesis`
 - Shutdown the Docker container: `docker stop thesis-container && docker rm thesis-container`
 - Copy the results to your system: `docker run --rm -v thesis_results:/usr/src/app/results -v /path/to/folder:/backup thesis cp -R /usr/src/app/results/. /backup`. Make sure to replace the `/path/to/folder` in the command with the desired output path on your system.
