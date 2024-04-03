@@ -381,7 +381,7 @@ def avg_weather(lst, name):
     ax = sns.heatmap(format_x, cmap=cmap, yticklabels=y_label, vmin=-1, vmax=1, annot=True, fmt=".2f")
     plt.title("heatmap change avg bad conditions " + name)
     plt.xlabel("weather severity")
-    plt.savefig(output_path + "plots/avg_weather_heatmap_change" + name + ".png")
+    plt.savefig(output_path + "plots/avg_weather_heatmap_change_" + name + ".png")
 
 
 # plots the average deviations over all images as a heatmap
@@ -468,7 +468,7 @@ def format_heatmap(lst, name, flag, idx):
     plt.xlabel("weather severity")
     plt.ylabel("weather effect")
     if flag:
-        plt.savefig(output_path + "plots/heatmap_change" + name + ".png")
+        plt.savefig(output_path + "plots/heatmap_change_" + name + ".png")
     else:
         plt.savefig(output_path + "plots/heatmap_" + name + ".png")
 

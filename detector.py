@@ -5,6 +5,9 @@ import config
 
 input_path = config.INPUT_PATH
 
+coco_model = config.COCO_MODEL
+tsr_model = config.TSR_MODEL
+
 
 # uses yolo weights to detect coco and tsr objects in input image, draws bounding boxes around objects and saves result
 def detect():
@@ -24,11 +27,7 @@ def detect():
         with open("resources/coco.names", 'r') as f:
             classes = f.read().splitlines()
 
-        net = cv2.dnn.readNetFromDarknet("resources/yolov4.cfg", "resources/yolov4.weights")
-
-        model = cv2.dnn_DetectionModel(net)
-        model.setInputParams(scale=1 / 255, size=(416, 416), swapRB=True)
-        classIds, scores, boxes = model.detect(img, confThreshold=0.5, nmsThreshold=0.4)
+        classIds, scores, boxes = coco_model.detect(img, confThreshold=0.5, nmsThreshold=0.4)
 
         detected_classes = []
         for (classId, score, box) in zip(classIds, scores, boxes):
@@ -65,11 +64,7 @@ def detect():
         with open("resources/classes.names", 'r') as f:
             classes = f.read().splitlines()
 
-        net = cv2.dnn.readNetFromDarknet("resources/yolov4-ts2.cfg", "resources/yolov4-ts2_best.weights")
-
-        model = cv2.dnn_DetectionModel(net)
-        model.setInputParams(scale=1 / 255, size=(416, 416), swapRB=True)
-        classIds, scores, boxes = model.detect(img, confThreshold=0.5, nmsThreshold=0.4)
+        classIds, scores, boxes = tsr_model.detect(img, confThreshold=0.5, nmsThreshold=0.4)
 
         detected_classes = []
         for (classId, score, box) in zip(classIds, scores, boxes):
