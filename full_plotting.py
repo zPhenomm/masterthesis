@@ -14,7 +14,7 @@ spots = ["0-0", "0-1", "0-2", "0-3", "0-4", "0-5", "1-0", "1-1", "1-2", "1-3", "
          "2-4", "2-5", "3-0", "3-1", "3-2", "3-3", "3-4", "3-5", "4-0", "4-1", "4-2", "4-3", "4-4", "4-5", "5-0", "5-1",
          "5-2", "5-3", "5-4", "5-5"]
 
-weather_names = ["snow", "fog", "frost", "splatter", "brightness", "blur"]
+weather_names = ["Schnee", "Nebel", "Frost", "Schmutz", "Überblendung", "Unschärfe"]
 
 # select plot types
 avg_plot = 1
@@ -254,8 +254,8 @@ def plot(plotlist, img):
         plt.xticks(ticks, spots)
         ax = plt.gca()
         ax.set_ylim([0, 1.1])
-        plt.xlabel("augmentation")
-        plt.ylabel("deviation")
+        plt.xlabel("Augmentation")
+        plt.ylabel("Abweichung")
 
 
 # plots the deviations for each augmentation over all images as violin plots
@@ -273,7 +273,7 @@ def format_violin(lst, name, idx):
         tmp = []
 
     fig, axs = plt.subplots(2, 3, sharey=True)
-    fig.suptitle("deviation distribution over all images of class " + name)
+    fig.suptitle("Verteilung Abweichungen Klasse " + name)
     plot_layout = [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2)]
     count = 0
     for i in range(0, len(lst[0]), config.SEVERITY_NUMBER):
@@ -309,12 +309,12 @@ def avg_weather(lst, name):
 
     plt.figure()
     plt.violinplot(format)
-    plt.title("deviation distribution over all images with avg bad conditons of class " + name)
+    plt.title("Verteilung Abweichungen bei durchschnittlichen Wettereffekten Klasse " + name, fontsize=10)
     plt.xticks([1, 2, 3, 4, 5, 6], ["0", "1", "2", "3", "4", "5"])
     ax = plt.gca()
     ax.set_ylim([0, 1.1])
-    plt.xlabel("weather severity")
-    plt.ylabel("deviation")
+    plt.xlabel("Wetter Intensität")
+    plt.ylabel("Abweichung")
     plt.savefig(output_path + "plots/avg_weather_violin_" + name + ".png")
 
     # format violin plot for heatmap
@@ -337,16 +337,16 @@ def avg_weather(lst, name):
     cmap = sns.cm.rocket_r
     y_label = [""]
     ax = sns.heatmap(format, cmap=cmap, yticklabels=y_label, vmin=0, vmax=1, annot=True, fmt=".2f")
-    plt.title("heatmap of deviation with avg bad conditions " + name)
-    plt.xlabel("weather severity")
+    plt.title("Abweichungen bei durchschnittlichen Wettereffekten Klasse " + name, fontsize=10)
+    plt.xlabel("Wetter Intensität")
     plt.savefig(output_path + "plots/avg_weather_heatmap_" + name + ".png")
 
     plt.figure()
     cmap = sns.cm.rocket_r
     y_label = [" "]
     ax = sns.heatmap(format_x, cmap=cmap, yticklabels=y_label, vmin=-1, vmax=1, annot=True, fmt=".2f")
-    plt.title("heatmap change avg bad conditions " + name)
-    plt.xlabel("weather severity")
+    plt.title("Änderungsrate Abweichungen bei durchschnittlichen Wettereffekten Klasse " + name, fontsize=9)
+    plt.xlabel("Wetter Intensität")
     plt.savefig(output_path + "plots/avg_weather_heatmap_change_" + name + ".png")
 
 
@@ -395,15 +395,15 @@ def format_heatmap(lst, name, flag, idx):
     y_label = weather_names
     if flag:
         ax = sns.heatmap(format_y, xticklabels=x_label, yticklabels=y_label, cmap=cmap, vmin=0, vmax=1, annot=True, fmt=".3f")
-        plt.title("heatmap change of class " + name)
+        plt.title("Änderungsrate Abweichungen Klasse " + name)
 
     else:
         ax = sns.heatmap(format, xticklabels=x_label, yticklabels=y_label, cmap=cmap, vmin=0, vmax=1, annot=True, fmt=".3f")
-        plt.title("heatmap of avg deviation of class " + name)
+        plt.title("Durchschnittliche Abweichungen Klasse " + name)
 
     #ax.invert_yaxis()
-    plt.xlabel("weather severity")
-    plt.ylabel("weather effect")
+    plt.xlabel("Wetter Intensität")
+    plt.ylabel("Wetter Effekt")
     if flag:
         plt.savefig(output_path + "plots/heatmap_change_" + name + ".png")
     else:
@@ -430,8 +430,8 @@ def individual_heatmap(lst, img):
         y_label = ["1", "2", "3", "4", "5", "6"]
         ax = sns.heatmap(format, xticklabels=x_label, yticklabels=y_label, cmap=cmap, vmin=0, vmax=1)
         ax.invert_yaxis()
-        plt.xlabel("weather severity")
-        plt.ylabel("weather effect")
+        plt.xlabel("Wetter Intensität")
+        plt.ylabel("Wetter Effekt")
 
 
 # plots the average deviations over all images of a specific class
@@ -450,10 +450,10 @@ def plot_avg(lst, img, idx):
     plt.figure(figsize=(13, 6))
     ticks = np.arange(36)
     plt.plot(avg_deviation, marker='o')
-    plt.title("avg deviation of class " + img)
+    plt.title("Durchschnittliche Abweichungen der Klasse " + img)
     plt.xticks(ticks, spots)
     ax = plt.gca()
     ax.set_ylim([0, 1.1])
-    plt.xlabel("augmentation")
-    plt.ylabel("deviation")
+    plt.xlabel("Augmentation")
+    plt.ylabel("Abweichung")
     plt.savefig(output_path + "plots/avg_dev_" + img + ".png", bbox_inches='tight')
