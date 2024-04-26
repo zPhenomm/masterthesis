@@ -9,9 +9,7 @@ import time
 
 input_path = config.INPUT_PATH
 output_path = config.OUTPUT_PATH
-# modified_list = [[], []]
-# modifier = [1, 1, 1, 1, 1, 0.5]
-# modify = 0
+
 spots = ["0-0", "0-1", "0-2", "0-3", "0-4", "0-5", "1-0", "1-1", "1-2", "1-3", "1-4", "1-5", "2-0", "2-1", "2-2", "2-3",
          "2-4", "2-5", "3-0", "3-1", "3-2", "3-3", "3-4", "3-5", "4-0", "4-1", "4-2", "4-3", "4-4", "4-5", "5-0", "5-1",
          "5-2", "5-3", "5-4", "5-5"]
@@ -197,18 +195,6 @@ def prepare_data():
         for i in range(0, len(index)):
             plot_avg(full_dev_tsr[i], index[i], i)
 
-    # # plot distribution of source images
-    # if modify:
-    #     plt.figure()
-    #     mdf = [number / 5 for number in modifier]  # normalize
-    #     bars = ['0', '1', '2', '3', '4', '5']
-    #     y_pos = np.arange(len(mdf))
-    #     plt.bar(y_pos, mdf)
-    #     plt.title("distribution of source images")
-    #     plt.xticks(y_pos, bars)
-    #     plt.xlabel("environmental degradation")
-    #     plt.ylabel("percentage of source images")
-
     if show:
         plt.show()
 
@@ -257,21 +243,6 @@ def readInValues(obj, item, mode):
     return values
 
 
-# # modifies the list of images by removing a specified amount of images from each environmental level
-# def modifyList(format, idx):
-#     global modified_list
-#
-#     for i in range(0, len(format), len(modifier)):
-#         for j in range(0, len(modifier)):
-#             n = round(len(format[i + j]) * modifier[j])  # n = how many images are in list after modification
-#             if n == 0:  # can't be zero
-#                 n = 1
-#             if n < len(format[i + j]) and len(format[i + j]) - n > 0:  # if we need to modify and list won't be empty
-#                 for k in range(0, len(format[i + j]) - n):
-#                     format[i + j].pop(random.randrange(len(format[i + j])))  # remove random images from list
-#     modified_list[idx] = format
-
-
 # plots the deviations of a specific class and image
 def plot(plotlist, img):
     ticks = np.arange(36)
@@ -300,11 +271,6 @@ def format_violin(lst, name, idx):
             tmp.append(lst[j][i])
         format.append(tmp)
         tmp = []
-
-    # # remove random images from total list corresponding to the set modifiers
-    # if modify and not modified_list[idx]:
-    #     modifyList(format, idx)
-    #     format = modified_list[idx].copy()
 
     fig, axs = plt.subplots(2, 3, sharey=True)
     fig.suptitle("deviation distribution over all images of class " + name)
@@ -391,28 +357,6 @@ def format_heatmap(lst, name, flag, idx):
         return
 
     avg_deviation = []
-    # tmp = []
-    # big_tmp = []
-    #
-    # # calculate avg of all deviations
-    # if modify and not modified_list[idx]:
-    #     for i in range(0, len(lst[0])):
-    #         for j in range(0, len(lst)):
-    #             tmp.append(lst[j][i])
-    #         big_tmp.append(tmp)
-    #         tmp = []
-    #
-    #     modifyList(big_tmp, idx)
-
-    # if modify:
-    #     big_tmp = modified_list[idx].copy()
-    #     for i in range(0, len(big_tmp)):
-    #         sum = 0
-    #         for j in range(0, len(big_tmp[i])):
-    #             sum += big_tmp[i][j]
-    #         avg_deviation.append(round(sum / len(big_tmp[i]), 3))
-    #
-    # else:
     for i in range(0, len(lst[0])):
         sum = 0
         for j in range(0, len(lst)):
@@ -441,13 +385,6 @@ def format_heatmap(lst, name, flag, idx):
                 format_y[j][i] = m
             last_coordinate = (0, 0)
 
-        # for i in range(0, severity_number):
-        #     for j in range(0, severity_number):
-        #         m = round((format[i][j] - last_coordinate[1]), 3)
-        #         last_coordinate = (j + 1, format[i][j])
-        #         format_x[i][j] = m
-        #     last_coordinate = (0, 0)
-
     format = list(map(list, zip(*format)))
     # format_x = list(map(list, zip(*format_x)))
     format_y = list(map(list, zip(*format_y)))
@@ -457,7 +394,7 @@ def format_heatmap(lst, name, flag, idx):
     x_label = ["0", "1", "2", "3", "4", "5"]
     y_label = weather_names
     if flag:
-        ax = sns.heatmap(format_y, xticklabels=x_label, yticklabels=y_label, cmap=cmap, vmin=-1, vmax=1, annot=True, fmt=".3f")
+        ax = sns.heatmap(format_y, xticklabels=x_label, yticklabels=y_label, cmap=cmap, vmin=0, vmax=1, annot=True, fmt=".3f")
         plt.title("heatmap change of class " + name)
 
     else:
@@ -471,18 +408,6 @@ def format_heatmap(lst, name, flag, idx):
         plt.savefig(output_path + "plots/heatmap_change_" + name + ".png")
     else:
         plt.savefig(output_path + "plots/heatmap_" + name + ".png")
-
-    # if flag:
-    #     plt.figure()
-    #     cmap = sns.cm.rocket_r
-    #     x_label = ["0", "1", "2", "3", "4", "5"]
-    #     y_label = ["0", "1", "2", "3", "4", "5"]
-    #     ax = sns.heatmap(format_x, xticklabels=x_label, yticklabels=y_label, cmap=cmap, vmin=-1, vmax=1, annot=True, fmt=".3f")
-    #     plt.title("d_kpi / d_cam_degradation " + name)
-    #     ax.invert_yaxis()
-    #     plt.xlabel("camera degradation")
-    #     plt.ylabel("environment effect")
-    #     plt.savefig(oldpath + "plots/heatmap_dev_deg_" + name + ".png")
 
 
 # plots the deviations of a specific class and image as a heatmap
@@ -516,27 +441,6 @@ def plot_avg(lst, img, idx):
         return
 
     avg_deviation = []
-    # tmp = []
-    # big_tmp = []
-    # # calculate avg of all deviations
-    # if modify and not modified_list[idx]:
-    #     for i in range(0, len(lst[0])):
-    #         for j in range(0, len(lst)):
-    #             tmp.append(lst[j][i])
-    #         big_tmp.append(tmp)
-    #         tmp = []
-    #
-    #     modifyList(big_tmp, idx)
-    #
-    # if modify:
-    #     big_tmp = modified_list[idx].copy()
-    #     for i in range(0, len(big_tmp)):
-    #         sum = 0
-    #         for j in range(0, len(big_tmp[i])):
-    #             sum += big_tmp[i][j]
-    #         avg_deviation.append(round(sum / len(big_tmp[i]), 3))
-    #
-    # else:
     for i in range(0, len(lst[0])):
         sum = 0
         for j in range(0, len(lst)):
