@@ -11,7 +11,7 @@ Make sure to have Git LFS installed on your system to download the .weights file
 - `convert_images.py`: Script for converting the GTSDB images from `.ppm` to `.jpg`.
 - `set_splitting`: Script for splitting the GTSDB dataset into train and test sets.
 - `Dockerfile`: File for running the project with Docker.
-- `input_data/`: Folder containing the input data for the analysis.
+- `input_data/`: Folder containing the input data for the analysis. The provided images are the same that are used in the analysis of this master thesis.
 - `results/`: Created at runtime, contains results after completion.
 - `resources/`: Folder containing files for running object detection and YOLOv4 training.
 - `GTSDB/`: Dataset on which the traffic sign detector has been trained.
@@ -19,11 +19,12 @@ Make sure to have Git LFS installed on your system to download the .weights file
 ### Running the project:
 - Install Python (Version >= 3.10) and pip
 - Install all requirements listed in `requirements.txt`
-- Run `python3 main.py` in the project directory
+- Run `python3 main.py` in the project directory with either the provided input files to verify the results of this thesis or with own dataset.
+- Clear results from project directory before running again to avoid filename conflicts
 
 ### Running the project with Docker:
 - Navigate to the project folder in your filesystem.
 - Build the image (1.8 GB): `docker build -t thesis .`
 - Run the project and save results to a Docker volume: `docker run -it --name thesis-container -v thesis_results:/usr/src/app/results thesis`
 - Shutdown the Docker container: `docker stop thesis-container && docker rm thesis-container`
-- Copy the results to your system: `docker run --rm -v thesis_results:/usr/src/app/results -v /path/to/folder:/backup thesis cp -R /usr/src/app/results/. /backup`. Make sure to replace the `/path/to/folder` in the command with the desired output path on your system.
+- Move the results to your system: `docker run --rm -v thesis_results:/usr/src/app/results -v /path/to/folder:/backup thesis mv /usr/src/app/results/. /backup`. Make sure to replace the `/path/to/folder` in the command with the desired output path on your system.
