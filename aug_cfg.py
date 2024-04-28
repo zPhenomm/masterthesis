@@ -1,6 +1,5 @@
 import imgaug.augmenters as ia
 
-sequence = 1  # 1 for full comparison, 0 for rest
 description = ""
 
 

@@ -6,6 +6,9 @@ OUTPUT_PATH = os.getcwd() + "/results/"
 
 NO_AUG = False
 SEVERITY_NUMBER = 6
+WEATHER_NAMES = ["Schnee", "Nebel", "Frost", "Schmutz", "Überblendung", "Unschärfe"]
+
+CONF_THRESH = 0.45
 
 coco_net = cv2.dnn.readNetFromDarknet("resources/yolov4.cfg", "resources/yolov4.weights")
 COCO_MODEL = cv2.dnn_DetectionModel(coco_net)

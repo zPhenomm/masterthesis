@@ -2,10 +2,8 @@ import matplotlib.pyplot as plt
 import os
 import seaborn as sns
 import numpy as np
-import random
 import config
 import shutil
-import time
 
 input_path = config.INPUT_PATH
 output_path = config.OUTPUT_PATH
@@ -14,7 +12,7 @@ spots = ["0-0", "0-1", "0-2", "0-3", "0-4", "0-5", "1-0", "1-1", "1-2", "1-3", "
          "2-4", "2-5", "3-0", "3-1", "3-2", "3-3", "3-4", "3-5", "4-0", "4-1", "4-2", "4-3", "4-4", "4-5", "5-0", "5-1",
          "5-2", "5-3", "5-4", "5-5"]
 
-weather_names = ["Schnee", "Nebel", "Frost", "Schmutz", "Überblendung", "Unschärfe"]
+weather_names = config.WEATHER_NAMES
 
 # select plot types
 avg_plot = 1
@@ -111,7 +109,7 @@ def prepare_data():
     # create violin plots
     if violin:
         for i in range(0, len(index)):
-            format_violin(full_dev_coco[i], index[i], i)
+            format_violin(full_dev_coco[i], index[i])
 
     # create violin and heatmap plots with avg bad conditions
     if average_weather:
@@ -121,17 +119,17 @@ def prepare_data():
     # create heatmap of averages
     if heatmap:
         for i in range(0, len(index)):
-            format_heatmap(full_dev_coco[i], index[i], 0, i)
+            format_heatmap(full_dev_coco[i], index[i], 0)
 
     # create heatmap derivatives of averages
     if derivative_heatmap:
         for i in range(0, len(index)):
-            format_heatmap(full_dev_coco[i], index[i], 1, i)
+            format_heatmap(full_dev_coco[i], index[i], 1)
 
     # create plot of average deviations
     if avg_plot:
         for i in range(0, len(index)):
-            plot_avg(full_dev_coco[i], index[i], i)
+            plot_avg(full_dev_coco[i], index[i])
 
     # tsr analysis
     mode = "tsr_results/"
@@ -173,7 +171,7 @@ def prepare_data():
     # create violin plots
     if violin:
         for i in range(0, len(index)):
-            format_violin(full_dev_tsr[i], index[i], i)
+            format_violin(full_dev_tsr[i], index[i])
 
     # create violin and heatmap plots with avg bad conditions
     if average_weather:
@@ -183,17 +181,17 @@ def prepare_data():
     # create heatmap of averages
     if heatmap:
         for i in range(0, len(index)):
-            format_heatmap(full_dev_tsr[i], index[i], 0, i)
+            format_heatmap(full_dev_tsr[i], index[i], 0)
 
     # create heatmap derivatives of averages
     if derivative_heatmap:
         for i in range(0, len(index)):
-            format_heatmap(full_dev_tsr[i], index[i], 1, i)
+            format_heatmap(full_dev_tsr[i], index[i], 1)
 
     # create plot of average deviations
     if avg_plot:
         for i in range(0, len(index)):
-            plot_avg(full_dev_tsr[i], index[i], i)
+            plot_avg(full_dev_tsr[i], index[i])
 
     if show:
         plt.show()
@@ -259,7 +257,7 @@ def plot(plotlist, img):
 
 
 # plots the deviations for each augmentation over all images as violin plots
-def format_violin(lst, name, idx):
+def format_violin(lst, name):
     if not lst:
         return
 
@@ -277,7 +275,7 @@ def format_violin(lst, name, idx):
     plot_layout = [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2)]
     count = 0
     for i in range(0, len(lst[0]), config.SEVERITY_NUMBER):
-        axs[plot_layout[count]].violinplot(format[i:i+config.SEVERITY_NUMBER])
+        axs[plot_layout[count]].violinplot(format[i:i+config.SEVERITY_NUMBER], showmedians=True, showextrema=False)
         axs[plot_layout[count]].set_xticks([1, 2, 3, 4, 5, 6], spots[i:i+config.SEVERITY_NUMBER])
         axs[plot_layout[count]].set_ylim([0, 1.1])
         axs[plot_layout[count]].set_xlabel(weather_names[count])
@@ -344,14 +342,14 @@ def avg_weather(lst, name):
     plt.figure()
     cmap = sns.cm.rocket_r
     y_label = [" "]
-    ax = sns.heatmap(format_x, cmap=cmap, yticklabels=y_label, vmin=-1, vmax=1, annot=True, fmt=".2f")
+    ax = sns.heatmap(format_x, cmap=cmap, yticklabels=y_label, vmin=0, vmax=1, annot=True, fmt=".2f")
     plt.title("Änderungsrate Abweichungen bei durchschnittlichen Wettereffekten Klasse " + name, fontsize=9)
     plt.xlabel("Wetter Intensität")
     plt.savefig(output_path + "plots/avg_weather_heatmap_change_" + name + ".png")
 
 
 # plots the average deviations over all images as a heatmap
-def format_heatmap(lst, name, flag, idx):
+def format_heatmap(lst, name, flag):
 
     if not lst:
         return
@@ -435,7 +433,7 @@ def individual_heatmap(lst, img):
 
 
 # plots the average deviations over all images of a specific class
-def plot_avg(lst, img, idx):
+def plot_avg(lst, img):
 
     if not lst:
         return
