@@ -19,7 +19,7 @@ Make sure to have Git LFS installed on your system to download the .weights file
 ### Running the project:
 - Install Python (Version >= 3.10) and pip
 - Install all requirements listed in `requirements.txt`
-- Run `python3 main.py` in the project directory with either the provided input files to verify the results of this thesis or with own dataset.
+- Run `python3 main.py` in the project directory with either the provided input files to verify the results of this thesis or with own dataset. Be aware that using the provided input the produced results will take around 13GB of space.
 - Clear results from project directory before running again to avoid filename conflicts
 
 ### Running the project with Docker:

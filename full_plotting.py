@@ -87,7 +87,7 @@ def prepare_data():
         stripped = truthimg_coco[i].split(sep, 1)[0]
         pattern = f"{stripped}_"
         # add list of all augmentations of one image to list
-        sequence.append([x for x in tsrlist if x.startswith(pattern)])
+        sequence.append([x for x in cocolist if x.startswith(pattern)])
 
         # save ground truth values of persons and cars
         true_values_coco[0].append(readInValues("car", truthimg_coco[i], mode))
@@ -276,11 +276,11 @@ def format_violin(lst, name):
     plot_layout = [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2)]
     count = 0
     for i in range(0, len(lst[0]), config.SEVERITY_NUMBER):
-        axs[plot_layout[count]].violinplot(format[i:i+config.SEVERITY_NUMBER], showmedians=True, showextrema=False)
+        axs[plot_layout[count]].violinplot(format[i:i+config.SEVERITY_NUMBER], showmedians=True, showextrema=True)
         axs[plot_layout[count]].set_xticks([1, 2, 3, 4, 5, 6], spots[i:i+config.SEVERITY_NUMBER])
         axs[plot_layout[count]].set_ylim([0, 1.1])
         axs[plot_layout[count]].set_xlabel(weather_names[count])
-        axs[plot_layout[count]].set_ylabel("deviation")
+        axs[plot_layout[count]].set_ylabel("Abweichung")
         count += 1
     plt.tight_layout()
     plt.savefig(output_path + "plots/violin_" + name + ".png")
@@ -307,7 +307,7 @@ def avg_weather(lst, name):
         tmp = []
 
     plt.figure()
-    plt.violinplot(format)
+    plt.violinplot(format, showmedians=True)
     plt.title("Verteilung Abweichungen bei durchschnittlichen Wettereffekten Klasse " + name, fontsize=10)
     plt.xticks([1, 2, 3, 4, 5, 6], ["0", "1", "2", "3", "4", "5"])
     ax = plt.gca()
