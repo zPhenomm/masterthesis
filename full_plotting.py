@@ -85,9 +85,9 @@ def prepare_data():
     for i, img in enumerate(truthimg_coco):
         sep = "_coco"
         stripped = truthimg_coco[i].split(sep, 1)[0]
+        pattern = f"{stripped}_"
         # add list of all augmentations of one image to list
-        sequence.append([x for x in cocolist if stripped in x])
-        #sequence[i].sort()
+        sequence.append([x for x in tsrlist if x.startswith(pattern)])
 
         # save ground truth values of persons and cars
         true_values_coco[0].append(readInValues("car", truthimg_coco[i], mode))
@@ -143,8 +143,9 @@ def prepare_data():
     for i, img in enumerate(truthimg_tsr):
         sep = "_tsr"
         stripped = truthimg_tsr[i].split(sep, 1)[0]
+        pattern = f"{stripped}_"
         # add list of all augmentations of one image to list
-        sequence.append([x for x in tsrlist if stripped in x])
+        sequence.append([x for x in tsrlist if x.startswith(pattern)])
 
         # save ground truth values of traffic signs
         true_values_tsr[0].append(readInValues("give_way", truthimg_tsr[i], mode))
