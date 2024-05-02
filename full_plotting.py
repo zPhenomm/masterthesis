@@ -78,7 +78,7 @@ def prepare_data():
     # coco analysis
     mode = "coco_results/"
     sequence = []
-    index = ["car", "person"]
+    index_coco = ["car", "person"]
     true_values_coco = [[], []]
     full_dev_coco = [[], []]
     plotlist = []
@@ -97,8 +97,8 @@ def prepare_data():
         # calculate deviations of images to ground truth
         for pos in range(0, len(true_values_coco)):
             if true_values_coco[pos][i]:
-                values, deviation = calculateDeviations(sequence, i, index[pos], true_values_coco[pos], mode)
-                plotlist.append([deviation, index[pos]])
+                values, deviation = calculateDeviations(sequence, i, index_coco[pos], true_values_coco[pos], mode)
+                plotlist.append([deviation, index_coco[pos]])
                 full_dev_coco[pos].append(deviation)
 
         # if idv_plot:
@@ -107,36 +107,11 @@ def prepare_data():
         #     individual_heatmap(plotlist, img)
         # plotlist = []
 
-    # create violin plots
-    if violin:
-        for i in range(0, len(index)):
-            format_violin(full_dev_coco[i], index[i])
-
-    # create violin and heatmap plots with avg bad conditions
-    if average_weather:
-        for i in range(0, len(index)):
-            avg_weather(full_dev_coco[i], index[i])
-
-    # create heatmap of averages
-    if heatmap:
-        for i in range(0, len(index)):
-            format_heatmap(full_dev_coco[i], index[i], 0)
-
-    # create heatmap derivatives of averages
-    if derivative_heatmap:
-        for i in range(0, len(index)):
-            format_heatmap(full_dev_coco[i], index[i], 1)
-
-    # create plot of average deviations
-    if avg_plot:
-        for i in range(0, len(index)):
-            plot_avg(full_dev_coco[i], index[i])
-
     # tsr analysis
     mode = "tsr_results/"
     sequence = []
     modified_list = [[], [], [], [], [], [], []]
-    index = ["give_way", "priority_road", "prohibitory", "mandatory", "danger", "stop", "prohibitory_end"]
+    index_tsr = ["give_way", "priority_road", "prohibitory", "mandatory", "danger", "stop", "prohibitory_end"]
     true_values_tsr = [[], [], [], [], [], [], []]
     full_dev_tsr = [[], [], [], [], [], [], []]
     plotlist = []
@@ -160,8 +135,8 @@ def prepare_data():
         # calculate deviations of images to ground truth
         for pos in range(0, len(true_values_tsr)):
             if true_values_tsr[pos][i]:
-                values, deviation = calculateDeviations(sequence, i, index[pos], true_values_tsr[pos], mode)
-                plotlist.append([deviation, index[pos]])
+                values, deviation = calculateDeviations(sequence, i, index_tsr[pos], true_values_tsr[pos], mode)
+                plotlist.append([deviation, index_tsr[pos]])
                 full_dev_tsr[pos].append(deviation)
 
         # if idv_plot:
@@ -172,28 +147,43 @@ def prepare_data():
 
     # create violin plots
     if violin:
-        for i in range(0, len(index)):
-            format_violin(full_dev_tsr[i], index[i])
+        for i in range(0, len(index_coco)):
+            format_violin(full_dev_coco[i], index_coco[i])
+
+        for i in range(0, len(index_tsr)):
+            format_violin(full_dev_tsr[i], index_tsr[i])
 
     # create violin and heatmap plots with avg bad conditions
     if average_weather:
-        for i in range(0, len(index)):
-            avg_weather(full_dev_tsr[i], index[i])
+        for i in range(0, len(index_coco)):
+            avg_weather(full_dev_coco[i], index_coco[i])
+
+        for i in range(0, len(index_tsr)):
+            avg_weather(full_dev_tsr[i], index_tsr[i])
 
     # create heatmap of averages
     if heatmap:
-        for i in range(0, len(index)):
-            format_heatmap(full_dev_tsr[i], index[i], 0)
+        for i in range(0, len(index_coco)):
+            format_heatmap(full_dev_coco[i], index_coco[i], 0)
+
+        for i in range(0, len(index_tsr)):
+            format_heatmap(full_dev_tsr[i], index_tsr[i], 0)
 
     # create heatmap derivatives of averages
     if derivative_heatmap:
-        for i in range(0, len(index)):
-            format_heatmap(full_dev_tsr[i], index[i], 1)
+        for i in range(0, len(index_coco)):
+            format_heatmap(full_dev_coco[i], index_coco[i], 1)
+
+        for i in range(0, len(index_tsr)):
+            format_heatmap(full_dev_tsr[i], index_tsr[i], 1)
 
     # create plot of average deviations
     if avg_plot:
-        for i in range(0, len(index)):
-            plot_avg(full_dev_tsr[i], index[i])
+        for i in range(0, len(index_coco)):
+            plot_avg(full_dev_coco[i], index_coco[i])
+
+        for i in range(0, len(index_tsr)):
+            plot_avg(full_dev_tsr[i], index_tsr[i])
 
     if show:
         plt.show()
@@ -270,7 +260,7 @@ def plot(plotlist, img):
         plt.xticks(ticks, spots)
         ax = plt.gca()
         ax.set_ylim([0, 1.1])
-        plt.xlabel("Augmentation")
+        plt.xlabel("Augmentierung")
         plt.ylabel("Abweichung")
 
 
@@ -387,32 +377,29 @@ def format_heatmap(lst, name, flag):
         for k in range(0, len(lst[0]), config.SEVERITY_NUMBER):
             format[j].append(avg_deviation[j + k])
 
-    # calculate derivative of heatmap entries in y-direction, if selected
-    format_y = [[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0]]
+    # calculate derivative of heatmap entries in x-direction, if selected
     format_x = [[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0]]
-    #format_y = [[0] * 6] * 6  this should produce the same results but for some reason it doesnt
-    #format_x = [[0] * 6] * 6
-    #format_y = format.copy()  this should produce the same results but for some reason it doesnt
-    #format_x = format.copy()
+    #format_x = [[0] * 6] * 6  this should produce the same results but for some reason it doesnt
+    #format_x = format.copy()  this should produce the same results but for some reason it doesnt
+
     if flag:
         last_coordinate = (0, 0)
         for i in range(0, config.SEVERITY_NUMBER):
             for j in range(0, config.SEVERITY_NUMBER):
                 m = round((format[j][i] - last_coordinate[1]), 3)
                 last_coordinate = (j + 1, format[j][i])
-                format_y[j][i] = m
+                format_x[j][i] = m
             last_coordinate = (0, 0)
 
     format = list(map(list, zip(*format)))
-    # format_x = list(map(list, zip(*format_x)))
-    format_y = list(map(list, zip(*format_y)))
+    format_x = list(map(list, zip(*format_x)))
 
     plt.figure()
     cmap = sns.cm.rocket_r
     x_label = ["0", "1", "2", "3", "4", "5"]
     y_label = weather_names
     if flag:
-        ax = sns.heatmap(format_y, xticklabels=x_label, yticklabels=y_label, cmap=cmap, vmin=0, vmax=1, annot=True, fmt=".3f")
+        ax = sns.heatmap(format_x, xticklabels=x_label, yticklabels=y_label, cmap=cmap, vmin=0, vmax=1, annot=True, fmt=".3f")
         plt.title("Änderungsrate Abweichungen Klasse " + name)
 
     else:
@@ -472,6 +459,6 @@ def plot_avg(lst, img):
     plt.xticks(ticks, spots)
     ax = plt.gca()
     ax.set_ylim([0, 1.1])
-    plt.xlabel("Augmentation")
+    plt.xlabel("Augmentierung")
     plt.ylabel("Abweichung")
     plt.savefig(output_path + "plots/avg_dev_" + img + ".png", bbox_inches='tight')
