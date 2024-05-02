@@ -8,6 +8,7 @@ import shutil
 input_path = config.INPUT_PATH
 output_path = config.OUTPUT_PATH
 
+# list of augmentation combinations for plotting
 spots = ["0-0", "0-1", "0-2", "0-3", "0-4", "0-5", "1-0", "1-1", "1-2", "1-3", "1-4", "1-5", "2-0", "2-1", "2-2", "2-3",
          "2-4", "2-5", "3-0", "3-1", "3-2", "3-3", "3-4", "3-5", "4-0", "4-1", "4-2", "4-3", "4-4", "4-5", "5-0", "5-1",
          "5-2", "5-3", "5-4", "5-5"]
@@ -198,7 +199,7 @@ def prepare_data():
         plt.show()
 
 
-# this method calculates the deviation of an augmentation sequence of an image of a specified class (car, person,..)
+# this function calculates the deviation of an augmentation sequence of an image of a specified class (car, person,..)
 def calculateDeviations(sequence, loopindex, obj, true_values, mode):
     values = []
     deviation = []
@@ -223,7 +224,7 @@ def calculateDeviations(sequence, loopindex, obj, true_values, mode):
     return values, deviation
 
 
-# this helper method reads in the values of a specified class (car, person,..) in a specified txt file (item)
+# this helper function reads in the values of a specified class (car, person,..) in a specified txt file (item)
 def readInValues(obj, item, mode):
 
     with open(output_path + mode + item) as f:
@@ -240,6 +241,22 @@ def readInValues(obj, item, mode):
     f.close()
 
     return values
+
+
+# this function performs IQR outlier removal on a list of input values
+def iqr_outlier(values):
+
+    q1 = np.percentile(values, 25)
+    q3 = np.percentile(values, 75)
+    iqr = q3 - q1
+
+    lower = q1 - 1.5 * iqr
+    upper = q3 + 1.5 * iqr
+
+    #filtered_data = [x for x in values if x >= lower_bound and x <= upper_bound]
+    filtered_data = [x for x in values if lower <= x <= upper]
+
+    return filtered_data
 
 
 # plots the deviations of a specific class and image
@@ -268,7 +285,7 @@ def format_violin(lst, name):
     for i in range(0, len(lst[0])):
         for j in range(0, len(lst)):
             tmp.append(lst[j][i])
-        format.append(tmp)
+        format.append(iqr_outlier(tmp))  # remove outliers with IQR for better visualization
         tmp = []
 
     fig, axs = plt.subplots(2, 3, sharey=True)
@@ -292,6 +309,7 @@ def avg_weather(lst, name):
         return
 
     format = []
+    format_outlier = []
     format_x = []
     tmp = []
     sum = 0
@@ -304,10 +322,11 @@ def avg_weather(lst, name):
             tmp.append(sum)
             sum = 0
         format.append(tmp)
+        format_outlier.append(iqr_outlier(tmp))
         tmp = []
 
     plt.figure()
-    plt.violinplot(format, showmedians=True)
+    plt.violinplot(format_outlier, showmedians=True)
     plt.title("Verteilung Abweichungen bei durchschnittlichen Wettereffekten Klasse " + name, fontsize=10)
     plt.xticks([1, 2, 3, 4, 5, 6], ["0", "1", "2", "3", "4", "5"])
     ax = plt.gca()
