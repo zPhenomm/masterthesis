@@ -21,8 +21,8 @@ violin = 1
 heatmap = 1
 derivative_heatmap = 1
 average_weather = 1
-# idv_heatmap = 0
-# idv_plot = 0
+idv_heatmap = 0
+idv_plot = 0
 show = 0  # show plots
 
 
@@ -101,11 +101,11 @@ def prepare_data():
                 plotlist.append([deviation, index_coco[pos]])
                 full_dev_coco[pos].append(deviation)
 
-        # if idv_plot:
-        #     plot(plotlist, img)
-        # if idv_heatmap:
-        #     individual_heatmap(plotlist, img)
-        # plotlist = []
+        if idv_plot:
+            plot(plotlist, img)
+        if idv_heatmap:
+            individual_heatmap(plotlist, img)
+        plotlist = []
 
     # tsr analysis
     mode = "tsr_results/"
@@ -139,11 +139,11 @@ def prepare_data():
                 plotlist.append([deviation, index_tsr[pos]])
                 full_dev_tsr[pos].append(deviation)
 
-        # if idv_plot:
-        #     plot(plotlist, img)
-        # if idv_heatmap:
-        #     individual_heatmap(plotlist, img)
-        # plotlist = []
+        if idv_plot:
+            plot(plotlist, img)
+        if idv_heatmap:
+            individual_heatmap(plotlist, img)
+        plotlist = []
 
     # create violin plots
     if violin:
@@ -216,7 +216,6 @@ def calculateDeviations(sequence, loopindex, obj, true_values, mode):
 
 # this helper function reads in the values of a specified class (car, person,..) in a specified txt file (item)
 def readInValues(obj, item, mode):
-
     with open(output_path + mode + item) as f:
         lines = f.readlines()
         sep = obj + ":"
@@ -235,7 +234,6 @@ def readInValues(obj, item, mode):
 
 # this function performs IQR outlier removal on a list of input values
 def iqr_outlier(values):
-
     q1 = np.percentile(values, 25)
     q3 = np.percentile(values, 75)
     iqr = q3 - q1
@@ -243,10 +241,8 @@ def iqr_outlier(values):
     lower = q1 - 1.5 * iqr
     upper = q3 + 1.5 * iqr
 
-    #filtered_data = [x for x in values if x >= lower_bound and x <= upper_bound]
-    filtered_data = [x for x in values if lower <= x <= upper]
-
-    return filtered_data
+    filtered_values = [x for x in values if lower <= x <= upper]
+    return filtered_values
 
 
 # plots the deviations of a specific class and image
@@ -256,12 +252,13 @@ def plot(plotlist, img):
     for i, item in enumerate(plotlist):
         plt.figure(figsize=(13, 6))
         plt.plot(item[0], marker='o')
-        plt.title(item[1] + " " + str(img)[:-4])
+        plt.title("Durchschnittliche Abweichungen der Klasse " + item[1] + " in Bild " + str(img)[:-4])
         plt.xticks(ticks, spots)
         ax = plt.gca()
         ax.set_ylim([0, 1.1])
         plt.xlabel("Augmentierung")
         plt.ylabel("Abweichung")
+        plt.savefig(output_path + "plots/idv_dev_" + img[:-4] + ".png", bbox_inches='tight')
 
 
 # plots the deviations for each augmentation over all images as violin plots
@@ -271,7 +268,6 @@ def format_violin(lst, name):
 
     format = []
     tmp = []
-
     for i in range(0, len(lst[0])):
         for j in range(0, len(lst)):
             tmp.append(lst[j][i])
@@ -294,7 +290,6 @@ def format_violin(lst, name):
 
 
 def avg_weather(lst, name):
-
     if not lst:
         return
 
@@ -303,7 +298,6 @@ def avg_weather(lst, name):
     format_x = []
     tmp = []
     sum = 0
-
     for i in range(0, config.SEVERITY_NUMBER):
         for j in range(0, len(lst)):
             for k in range(0, len(lst[0]), config.SEVERITY_NUMBER):
@@ -360,7 +354,6 @@ def avg_weather(lst, name):
 
 # plots the average deviations over all images as a heatmap
 def format_heatmap(lst, name, flag):
-
     if not lst:
         return
 
@@ -406,7 +399,6 @@ def format_heatmap(lst, name, flag):
         ax = sns.heatmap(format, xticklabels=x_label, yticklabels=y_label, cmap=cmap, vmin=0, vmax=1, annot=True, fmt=".3f")
         plt.title("Durchschnittliche Abweichungen Klasse " + name)
 
-    #ax.invert_yaxis()
     plt.xlabel("Wetter Intensität")
     plt.ylabel("Wetter Effekt")
     if flag:
@@ -417,31 +409,27 @@ def format_heatmap(lst, name, flag):
 
 # plots the deviations of a specific class and image as a heatmap
 def individual_heatmap(lst, img):
-
     for idx, item in enumerate(lst):
         format = [[], [], [], [], [], []]
         for j in range(0, config.SEVERITY_NUMBER):
-            format[j].append(item[0][j])
-            format[j].append(item[0][j+6])
-            format[j].append(item[0][j+12])
-            format[j].append(item[0][j+18])
-            format[j].append(item[0][j+24])
-            format[j].append(item[0][j+30])
+            for k in range(0, config.SEVERITY_NUMBER):
+                format[j].append(item[0][j + config.SEVERITY_NUMBER * k])
+
+        format = list(map(list, zip(*format)))
 
         plt.figure()
-        plt.title(item[1] + " " + str(img)[:-4])
+        plt.title("Durchschnittliche Abweichungen Klasse " + item[1] + " in Bild " + str(img)[:-4])
         cmap = sns.cm.rocket_r
         x_label = ["1", "2", "3", "4", "5", "6"]
-        y_label = ["1", "2", "3", "4", "5", "6"]
-        ax = sns.heatmap(format, xticklabels=x_label, yticklabels=y_label, cmap=cmap, vmin=0, vmax=1)
-        ax.invert_yaxis()
+        y_label = weather_names
+        ax = sns.heatmap(format, xticklabels=x_label, yticklabels=y_label, cmap=cmap, vmin=0, vmax=1, annot=True, fmt=".3f")
         plt.xlabel("Wetter Intensität")
         plt.ylabel("Wetter Effekt")
+        plt.savefig(output_path + "plots/idv_heatmap_" + img[:-4] + ".png", bbox_inches='tight')
 
 
 # plots the average deviations over all images of a specific class
-def plot_avg(lst, img):
-
+def plot_avg(lst, name):
     if not lst:
         return
 
@@ -455,10 +443,10 @@ def plot_avg(lst, img):
     plt.figure(figsize=(13, 6))
     ticks = np.arange(36)
     plt.plot(avg_deviation, marker='o')
-    plt.title("Durchschnittliche Abweichungen der Klasse " + img)
+    plt.title("Durchschnittliche Abweichungen der Klasse " + name)
     plt.xticks(ticks, spots)
     ax = plt.gca()
     ax.set_ylim([0, 1.1])
     plt.xlabel("Augmentierung")
     plt.ylabel("Abweichung")
-    plt.savefig(output_path + "plots/avg_dev_" + img + ".png", bbox_inches='tight')
+    plt.savefig(output_path + "plots/avg_dev_" + name + ".png", bbox_inches='tight')
