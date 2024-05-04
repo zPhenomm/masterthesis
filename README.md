@@ -24,7 +24,8 @@ Make sure to have Git LFS installed on your system to download the .weights file
 
 ### Running the project with Docker:
 - Navigate to the project folder in your filesystem.
-- Build the image (1.8 GB): `docker build -t thesis .`
+- Build the image (~4GB): `docker build -t thesis .`
 - Run the project and save results to a Docker volume: `docker run -it --name thesis-container -v thesis_results:/usr/src/app/results thesis`
 - Shutdown the Docker container: `docker stop thesis-container && docker rm thesis-container`
-- Move the results to your system: `docker run --rm -v thesis_results:/usr/src/app/results -v /path/to/folder:/backup thesis mv /usr/src/app/results/. /backup`. Make sure to replace the `/path/to/folder` in the command with the desired output path on your system.
+- Copy the results to your system: `docker run --rm -v thesis_results:/usr/src/app/results -v /path/to/folder:/backup thesis cp -r /usr/src/app/results/. /backup`. Make sure to replace the `/path/to/folder` in the command with the desired output path on your system.
+- Before running again remove the volume with the results: `docker volume rm thesis_results`

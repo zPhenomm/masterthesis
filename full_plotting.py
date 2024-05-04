@@ -256,7 +256,7 @@ def plot(plotlist, img):
         plt.xticks(ticks, spots)
         ax = plt.gca()
         ax.set_ylim([0, 1.1])
-        plt.xlabel("Augmentierung")
+        plt.xlabel("Augmentation")
         plt.ylabel("Abweichung")
         plt.savefig(output_path + "plots/idv_dev_" + img[:-4] + ".png", bbox_inches='tight')
 
@@ -447,6 +447,6 @@ def plot_avg(lst, name):
     plt.xticks(ticks, spots)
     ax = plt.gca()
     ax.set_ylim([0, 1.1])
-    plt.xlabel("Augmentierung")
+    plt.xlabel("Augmentation")
     plt.ylabel("Abweichung")
     plt.savefig(output_path + "plots/avg_dev_" + name + ".png", bbox_inches='tight')
