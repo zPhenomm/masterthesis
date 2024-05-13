@@ -12,6 +12,7 @@ Make sure to have Git LFS installed on your system to download the .weights file
 - `set_splitting`: Script for splitting the GTSDB dataset into train and test sets.
 - `Dockerfile`: File for running the project with Docker.
 - `input_data/`: Folder containing the input data for the analysis. The provided images are the same that are used in the analysis of this master thesis.
+- `input_data/augmented/`: Created at runtime, contains all augmented images without object detection after completion.
 - `results/`: Created at runtime, contains results after completion.
 - `resources/`: Folder containing files for running object detection and YOLOv4 training.
 - `GTSDB/`: Dataset on which the traffic sign detector has been trained.
