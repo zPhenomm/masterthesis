@@ -347,7 +347,7 @@ def avg_weather(lst, name):
     cmap = sns.cm.rocket_r
     y_label = [" "]
     ax = sns.heatmap(format_x, cmap=cmap, yticklabels=y_label, vmin=0, vmax=1, annot=True, fmt=".2f")
-    plt.title("Änderungsrate Abweichungen bei durchschnittlichen Wettereffekten Klasse " + name, fontsize=9)
+    plt.title("Änderungsrate Abweichungen bei durchschnittlichen Wettereffekten Klasse " + name, fontsize=8)
     plt.xlabel("Wetter Intensität")
     plt.savefig(output_path + "plots/avg_weather_heatmap_change_" + name + ".png")
 
