@@ -1,3 +1,6 @@
+# Author: Max Hannawald
+# This file creates the Docker image to run this project independent of the users' OS and system setup.
+
 FROM ubuntu:22.04
 
 # install Python, pip and libraries for OpenCV

@@ -1,9 +1,6 @@
 # Author: Max Hannawald
-# This script augments images in the working directory with imgauglib
-# and saves them in the same directory with a suffix specifying which experiment was done.
-# Make sure the scripts sits in the same folder as the images, otherwise specify a new path.
-# In aug_cfg you can specify what filters are to be applied and which number the experiment gets assigned.
-
+# This script augments images in the input folder with imgauglib and saves them in the same directory.
+# In aug_cfg.py you can specify what filters are to be applied.
 
 import imgaug as ia
 import imgaug.augmenters as iaa
@@ -44,23 +41,3 @@ def augment():
                 f.write(aug_cfg.description + "\n")
                 f.close()
                 print(filename + " " + str(i) + " " + str(j) + " augmentation done")
-
-    # # only augment a specific effect
-    # experiment_seq = aug_cfg.getExperimentSeq(0, 0)
-    # seq = iaa.Sequential(experiment_seq, random_order=False)
-    #
-    # filelist = [f for f in os.listdir(input_path) if os.path.isfile(os.path.join(input_path, f))]  # ignore folders
-    # for filename in filelist:
-    #
-    #     # skip script and info file
-    #     if filename.find(".py") != -1 or filename.find(".txt") != -1:
-    #         continue
-    #
-    #     filepath = os.path.join(input_path, filename)
-    #     img = cv2.imread(filepath)
-    #
-    #     image_aug = seq(image=img)
-    #     # save image with same name + _eff_x_sev_i_j
-    #     filepath = filepath[:-4] + ".jpg"
-    #     cv2.imwrite(filepath, image_aug)
-    #     print(filename + " augmentation done")

@@ -1,3 +1,6 @@
+# Author: Max Hannawald
+# Controller for the analysis pipeline.
+
 import full_plotting
 import detector
 import augmentation

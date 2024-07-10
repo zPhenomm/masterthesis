@@ -1,3 +1,6 @@
+# Author: Max Hannawald
+# This is the config file for the augmentation, analysis and data evaluation pipeline.
+
 import os
 import cv2
 
@@ -6,7 +9,7 @@ OUTPUT_PATH = os.getcwd() + "/results/"
 
 NO_AUG = False
 SEVERITY_NUMBER = 6
-WEATHER_NAMES = ["Schnee", "Nebel", "Frost", "Schmutz", "Überblendung", "Unschärfe"]
+WEATHER_NAMES = ["Schnee", "Nebel", "Frost", "Schmutz", "Blendung", "Unschärfe"]
 
 CONF_THRESH = 0.45
 

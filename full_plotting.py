@@ -1,3 +1,7 @@
+# Author: Max Hannawald
+# Evaluation script to visualize the results of the object detections to prove the existance and the severity of the
+# negative effect that different weather conditions can have on the performance of the object detetor.
+
 import matplotlib.pyplot as plt
 import os
 import seaborn as sns

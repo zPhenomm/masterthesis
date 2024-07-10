@@ -1,3 +1,7 @@
+# Author: Max Hannawald
+# This script uses the trained YOLOv4 weights to detect the relevant classes for this masterthesis in the provided images.
+# Results are saved in new images with bounding boxes and in textfiles.
+
 import cv2
 import os
 import time

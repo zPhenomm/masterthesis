@@ -1,3 +1,6 @@
+# Author: Max Hannawald
+# Helper script to split the training data into train and test set. Not part of the analysis pipeline.
+
 import os
 import random
 

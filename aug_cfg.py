@@ -1,3 +1,6 @@
+# Author: Max Hannawald
+# This file provides information what weather effects to use for the augmentation script.
+
 import imgaug.augmenters as ia
 
 description = ""
