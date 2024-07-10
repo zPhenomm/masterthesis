@@ -28,6 +28,7 @@ average_weather = 1
 idv_heatmap = 0
 idv_plot = 0
 show = 0  # show plots
+plt.rcParams.update({'figure.max_open_warning': 0})
 
 
 def sortResults():
