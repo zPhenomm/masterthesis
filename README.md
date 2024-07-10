@@ -24,7 +24,7 @@ Make sure to have Git LFS installed on your system to download the .weights file
 - Clear results from project directory before running again to avoid filename conflicts
 
 ### Running the project with Docker:
-- Install Docker if it's not natively supported by your OS.
+- Install [Docker](https://www.docker.com) if it's not natively supported by your OS.
 - Navigate in the terminal to the project folder in your filesystem.
 - Build the image (~4GB): `docker build -t thesis .`
 - Run the project and save results to a Docker volume: `docker run -it --name thesis-container -v thesis_results:/usr/src/app/results thesis`
