@@ -1,5 +1,5 @@
 # Author: Max Hannawald
-# Helper script to convert the GTSDB database to .jpg for the detectort training. Not part of the analysis pipeline.
+# Helper script to convert the GTSDB database to .jpg for the detector training. Not part of the analysis pipeline.
 
 import os
 import cv2
