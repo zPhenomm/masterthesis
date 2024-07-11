@@ -9,6 +9,7 @@ Make sure to have Git LFS installed on your system to download the .weights file
 - `main.py`: Main script utilizing `augmentation.py`, `detector.py`, `full_plotting.py`, to augment testimages and to analyse and visualize the influence of the augmentation on the object detection.
 - `aug_cfg.py` and `config.py`: Config scripts for augmentation, detection and plotting.
 - `convert_images.py`: Script for converting the GTSDB images from `.ppm` to `.jpg`.
+- `downscale.py`: Script for downscaling the input images.
 - `set_splitting`: Script for splitting the GTSDB dataset into train and test sets.
 - `Dockerfile`: File for running the project with Docker.
 - `input_data/`: Folder containing the input data for the analysis. The provided images are the same that are used in the analysis of this master thesis.
